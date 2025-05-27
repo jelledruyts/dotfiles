@@ -1,0 +1,6 @@
+[user]
+	name = Jelle Druyts
+	email = jelle.druyts@outlook.com
+[core]
+	excludesfile = ~/.gitignore
+	autocrlf = true

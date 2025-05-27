@@ -1,0 +1,2 @@
+# Globally exclude ".local" directories which contain local files that should not be tracked by git.
+.local/
