@@ -1,18 +1,3 @@
-$WingetPackageCollections = @(
-    @{
-        Name     = "Core"
-        Packages = @('7zip.7zip', 'Microsoft.Office')
-    },
-    @{
-        Name     = "Development"
-        Packages = @('Microsoft.VisualStudioCode', 'Microsoft.DotNet.SDK.8', 'Microsoft.AzureCLI', 'Telerik.Fiddler.Classic', 'OpenJS.NodeJS.LTS')
-    },
-    @{
-        Name     = "Optional"
-        Packages = @('EpicGames.EpicGamesLauncher')
-    }
-)
-
 function Read-Prompt {
     param (
         [Parameter(Mandatory)]
@@ -23,7 +8,7 @@ function Read-Prompt {
     return ($response -eq 'y' -or $response -eq 'yes' -or $response -eq '')
 }
 
-function New-SymbolicLinksRecursive {
+function Add-SymbolicLinksRecursive {
     param (
         [Parameter(Mandatory)]
         [string]$SourceDir,
@@ -69,28 +54,67 @@ function Install-WingetPackages {
     }
 }
 
-function Install-WingetPackageCollection {
-    param (
-        [Parameter(Mandatory)]
-        [hashtable]$PackageCollection
-    )
-
-    if (Read-Prompt -Message "Install ""$($PackageCollection.Name)"" packages?") {
-        Install-WingetPackages -Packages $PackageCollection.Packages
-    }
-}
-
 function Install-WingetPackageCollections {
     param (
         [Parameter(Mandatory)]
         [object[]]$PackageCollections
     )
 
-    foreach ($collection in $PackageCollections) {
-        Install-WingetPackageCollection -PackageCollection $collection
+    foreach ($packageCollection in $PackageCollections) {
+        if (Read-Prompt -Message "Install ""$($packageCollection.name)"" packages?") {
+            Install-WingetPackages -Packages $packageCollection.packages
+        }
     }
 }
 
-Install-WingetPackageCollections -PackageCollections $WingetPackageCollections
+function Add-StartupShortcut {
+    param (
+        [Parameter(Mandatory)]
+        [string]$ExecutablePath,
+        [string]$ShortcutName
+    )
 
-New-SymbolicLinksRecursive -SourceDir "$PSScriptRoot/home" -TargetDir $HOME
+    if (-not (Test-Path $ExecutablePath)) {
+        Write-Warning "Executable path ""$ExecutablePath"" does not exist. Skipping shortcut creation."
+        return
+    }
+
+    if (-not $ShortcutName) {
+        $ShortcutName = $(Split-Path $ExecutablePath -Leaf)
+    }
+
+    $startupFolder = [Environment]::GetFolderPath('Startup')
+    $shortcutPath = Join-Path $startupFolder "$ShortcutName.lnk"
+
+    $shell = New-Object -ComObject WScript.Shell
+    $shortcut = $shell.CreateShortcut($shortcutPath)
+    $shortcut.TargetPath = $ExecutablePath
+    $shortcut.WorkingDirectory = Split-Path $ExecutablePath
+    $shortcut.Save()
+
+    Write-Host "Startup app created at ""$shortcutPath"" for ""$ExecutablePath""."
+}
+
+function Add-StartupApps {
+    param (
+        [Parameter(Mandatory)]
+        [object[]]$StartupApps
+    )
+
+    foreach ($startupApp in $StartupApps) {
+        $executablePath = $startupApp.command.replace('~', $HOME)
+        Add-StartupShortcut -ExecutablePath $executablePath -ShortcutName $startupApp.name
+    }
+}
+
+Write-Host "Reading configuration from ""$PSScriptRoot/config.json""..."
+$config = Get-Content "$PSScriptRoot/config.json" | ConvertFrom-Json -AsHashtable
+
+Write-Host "`nCreating symbolic links..."
+Add-SymbolicLinksRecursive -SourceDir "$PSScriptRoot/home" -TargetDir $HOME
+
+Write-Host "`nInstalling winget packages..."
+Install-WingetPackageCollections -PackageCollections $config.winget
+
+Write-Host "`nAdding startup apps..."
+Add-StartupApps -StartupApps $config.startup

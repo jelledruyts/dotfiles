@@ -1,0 +1,34 @@
+{
+    "winget": [
+        {
+            "name": "Core",
+            "packages": [
+                "7zip.7zip",
+                "Microsoft.Office"
+            ]
+        },
+        {
+            "name": "Development",
+            "packages": [
+                "Microsoft.VisualStudioCode",
+                "Microsoft.DotNet.SDK.8",
+                "Microsoft.AzureCLI",
+                "Telerik.Fiddler.Classic",
+                "OpenJS.NodeJS.LTS"
+            ]
+        },
+        {
+            "name": "Optional",
+            "packages": [
+                "EpicGames.EpicGamesLauncher",
+                "dotPDNLLC.paintdotnet"
+            ]
+        }
+    ],
+    "startup": [
+        {
+            "name": "AutoHotkey",
+            "command": "~/OneDrive/Tools/System/AutoHotkey/AutoHotkeyU32.exe"
+        }
+    ]
+}
