@@ -4,7 +4,9 @@
             "name": "Core",
             "packages": [
                 "7zip.7zip",
-                "Microsoft.Office"
+                "Microsoft.Office",
+                "VideoLAN.VLC",
+                "9NKSQGP7F2NH" // WhatsApp on the Microsoft Store
             ]
         },
         {
@@ -21,14 +23,21 @@
             "name": "Optional",
             "packages": [
                 "EpicGames.EpicGamesLauncher",
-                "dotPDNLLC.paintdotnet"
+                "dotPDNLLC.paintdotnet",
+                "9P4CLT2RJ1RS" // MusicBee on the Microsoft Store
             ]
         }
     ],
     "startup": [
         {
             "name": "AutoHotkey",
-            "command": "~/OneDrive/Tools/System/AutoHotkey/AutoHotkeyU32.exe"
+            "command": "~/OneDrive/Tools/AutoHotkey/AutoHotkeyU32.exe"
         }
+    ],
+    "powershell": [
+        "Terminal-Icons"
+    ],
+    "nerdfonts": [
+        "CascadiaCode"
     ]
 }

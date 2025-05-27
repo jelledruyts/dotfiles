@@ -49,7 +49,7 @@ function Install-WingetPackages {
     foreach ($package in $Packages) {
         if (Read-Prompt -Message "Install ""$package"" package?") {
             Write-Host "Installing ""$package""..."
-            winget install -e --id $package
+            winget install --exact --accept-package-agreements --id $package
         }
     }
 }
@@ -107,8 +107,38 @@ function Add-StartupApps {
     }
 }
 
-Write-Host "Reading configuration from ""$PSScriptRoot/config.json""..."
-$config = Get-Content "$PSScriptRoot/config.json" | ConvertFrom-Json -AsHashtable
+function Add-PowerShellModules {
+    param (
+        [Parameter(Mandatory)]
+        [object[]]$PowerShellModules
+    )
+
+    Set-PSResourceRepository -Name "PSGallery" -Trusted
+
+    foreach ($powerShellModule in $PowerShellModules) {
+        Write-Host "Adding ""$powerShellModule""..."
+        Install-PSResource -Name $powerShellModule -AcceptLicense
+        Import-Module -Name $powerShellModule
+    }
+}
+
+function Add-NerdFonts {
+    param (
+        [Parameter(Mandatory)]
+        [object[]]$NerdFonts
+    )
+
+    Install-PSResource -Name NerdFonts
+    Import-Module -Name NerdFonts
+
+    foreach ($nerdFont in $NerdFonts) {
+        Write-Host "Adding ""$nerdFont""..."
+        Install-NerdFont -Name $nerdFont
+    }
+}
+
+Write-Host "Reading configuration..."
+$config = Get-Content "$PSScriptRoot/config.jsonc" | ConvertFrom-Json -AsHashtable
 
 Write-Host "`nCreating symbolic links..."
 Add-SymbolicLinksRecursive -SourceDir "$PSScriptRoot/home" -TargetDir $HOME
@@ -118,3 +148,9 @@ Install-WingetPackageCollections -PackageCollections $config.winget
 
 Write-Host "`nAdding startup apps..."
 Add-StartupApps -StartupApps $config.startup
+
+Write-Host "`nInstalling PowerShell modules..."
+Add-PowerShellModules -PowerShellModules $config.powershell
+
+Write-Host "`nInstalling Nerd Fonts..."
+Add-NerdFonts -NerdFonts $config.nerdfonts
