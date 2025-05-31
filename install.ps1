@@ -92,7 +92,7 @@ function Add-StartupShortcut {
     $shortcut.WorkingDirectory = Split-Path $ExecutablePath
     $shortcut.Save()
 
-    Write-Host "Startup app created at ""$shortcutPath"" for ""$ExecutablePath""."
+    Write-Host "Startup app created at ""$shortcutPath"" for ""$ExecutablePath"""
 }
 
 function Add-StartupApps {
@@ -133,8 +133,37 @@ function Add-NerdFonts {
 
     foreach ($nerdFont in $NerdFonts) {
         Write-Host "Adding ""$nerdFont""..."
-        Install-NerdFont -Name $nerdFont
+        Install-NerdFont -Name $nerdFont.name
     }
+}
+
+function Set-WindowsTerminalFont {
+    param (
+        [Parameter(Mandatory)]
+        [string]$FontFace
+    )
+
+    $settingsPath = Join-Path $env:LOCALAPPDATA "Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+    if (-not (Test-Path $settingsPath)) {
+        Write-Warning "Windows Terminal settings.json not found at ""$settingsPath""."
+        return
+    }
+
+    $settings = Get-Content $settingsPath -Raw | ConvertFrom-Json -AsHashtable
+
+    if (-not $settings.profiles.defaults) {
+        $settings.profiles.defaults = @{}
+    }
+
+    if (-not $settings.profiles.defaults.font) {
+        $settings.profiles.defaults.font = @{}
+    }
+
+    $settings.profiles.defaults.font.face = $FontFace
+
+    $settings | ConvertTo-Json -Depth 100 | Set-Content -Path $settingsPath -Encoding UTF8
+
+    Write-Host "Set Windows Terminal default profile font to ""$FontFace""."
 }
 
 Write-Host "Reading configuration..."
@@ -152,5 +181,8 @@ Add-StartupApps -StartupApps $config.startup
 Write-Host "`nInstalling PowerShell modules..."
 Add-PowerShellModules -PowerShellModules $config.powershell
 
-Write-Host "`nInstalling Nerd Fonts..."
-Add-NerdFonts -NerdFonts $config.nerdfonts
+if ($config.nerdfonts.count -gt 0) {
+    Write-Host "`nInstalling Nerd Fonts..."
+    Add-NerdFonts -NerdFonts $config.nerdfonts
+    Set-WindowsTerminalFont -FontFace $config.nerdfonts[0].font
+}

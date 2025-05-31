@@ -37,7 +37,10 @@
     "powershell": [
         "Terminal-Icons"
     ],
-    "nerdfonts": [
-        "CascadiaCode"
+    "nerdfonts": [ // The first one in the list will be used by default in Windows Terminal
+        {
+            "name": "CascadiaCode",
+            "font": "CaskaydiaCove Nerd Font"
+        }
     ]
 }
