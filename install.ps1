@@ -1,3 +1,15 @@
+function Assert-Elevated {
+    # Get the ID and security principal of the current user account
+    $myIdentity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $myPrincipal = new-object System.Security.Principal.WindowsPrincipal($myIdentity)
+    # Check to see if we are currently running "as Administrator"
+    $elevated = $myPrincipal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
+    if (!$elevated) {
+        Write-Warning "This script requires elevated permissions: please run as Administrator."
+        exit
+    }
+}
+
 function Read-Prompt {
     param (
         [Parameter(Mandatory)]
@@ -184,6 +196,8 @@ function Set-WindowsTerminalFont {
 
     Write-Host "Set Windows Terminal default profile font to ""$FontFace""."
 }
+
+Assert-Elevated
 
 Write-Host "Reading configuration..."
 $config = Get-Content "$PSScriptRoot/config.jsonc" | ConvertFrom-Json -AsHashtable
