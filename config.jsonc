@@ -24,6 +24,7 @@
             "packages": [
                 "EpicGames.EpicGamesLauncher",
                 "dotPDNLLC.paintdotnet",
+                "Microsoft.PowerBI",
                 "9P4CLT2RJ1RS" // MusicBee on the Microsoft Store
             ]
         }
@@ -42,5 +43,8 @@
             "name": "CascadiaCode",
             "font": "CaskaydiaCove Nerd Font"
         }
+    ],
+    "wsl": [
+        "ubuntu"
     ]
 }

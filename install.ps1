@@ -50,6 +50,15 @@ function Add-SymbolicLinksRecursive {
     }
 }
 
+function Install-WingetPackage {
+    param (
+        [Parameter(Mandatory)]
+        [string[]]$Package
+    )
+
+    winget install --exact --accept-package-agreements --id $package
+}
+
 function Install-WingetPackages {
     param (
         [Parameter(Mandatory)]
@@ -59,7 +68,7 @@ function Install-WingetPackages {
     foreach ($package in $Packages) {
         if (Read-Prompt -Message "Install ""$package"" package?") {
             Write-Host "Installing ""$package""..."
-            winget install --exact --accept-package-agreements --id $package
+            Install-WingetPackage -Package $package
         }
     }
 }
@@ -196,4 +205,13 @@ if ($config.nerdfonts.count -gt 0) {
     Write-Host "`nInstalling Nerd Fonts..."
     Add-NerdFonts -NerdFonts $config.nerdfonts
     Set-WindowsTerminalFont -FontFace $config.nerdfonts[0].font
+}
+
+if ($config.wsl.count -gt 0) {
+    Write-Host "`nInstalling WSL distributions..."
+    Install-WingetPackage -Package "Microsoft.WSL"
+    foreach ($wsl in $config.wsl) {
+        Write-Host "Installing WSL distribution ""$wsl""..."
+        wsl --install $wsl
+    }
 }
