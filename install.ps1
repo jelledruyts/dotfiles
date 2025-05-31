@@ -8,6 +8,28 @@ function Read-Prompt {
     return ($response -eq 'y' -or $response -eq 'yes' -or $response -eq '')
 }
 
+function Add-SymbolicLink {
+    param (
+        [Parameter(Mandatory)]
+        [string]$SourceFile,
+        [Parameter(Mandatory)]
+        [string]$TargetFile
+    )
+
+    if (Test-Path $TargetFile) {
+        Write-Warning "Skipped linking ""$SourceFile"" as target ""$TargetFile"" already exists."
+    }
+    else {
+        # Ensure target directory exists
+        $targetDir = Split-Path $TargetFile -Parent
+        if (-not (Test-Path $targetDir)) {
+            New-Item -Path $targetDir -ItemType Directory | Out-Null
+        }
+        New-Item -Path $TargetFile -ItemType SymbolicLink -Value $SourceFile | Out-Null
+        Write-Host "Linked ""$SourceFile)"" -> ""$TargetFile"""
+    }
+}
+
 function Add-SymbolicLinksRecursive {
     param (
         [Parameter(Mandatory)]
@@ -24,19 +46,7 @@ function Add-SymbolicLinksRecursive {
     Get-ChildItem -Path $SourceDir -Recurse -File | ForEach-Object {
         $relativePath = $_.FullName.Substring($SourceDir.Length).TrimStart('\', '/')
         $linkPath = Join-Path $TargetDir $relativePath
-        $linkDir = Split-Path $linkPath
-
-        if (-not (Test-Path $linkDir)) {
-            New-Item -Path $linkDir -ItemType Directory -Force | Out-Null
-        }
-
-        if (Test-Path $linkPath) {
-            Write-Warning "Skipped linking ""$($_.FullName)"" as target ""$linkPath"" already exists."
-        }
-        else {
-            New-Item -Path $linkPath -ItemType SymbolicLink -Value $_.FullName | Out-Null
-            Write-Host "Linked ""$($_.FullName)"" -> ""$linkPath"""
-        }
+        Add-SymbolicLink -SourceFile $_.FullName -TargetFile $linkPath
     }
 }
 
@@ -170,7 +180,8 @@ Write-Host "Reading configuration..."
 $config = Get-Content "$PSScriptRoot/config.jsonc" | ConvertFrom-Json -AsHashtable
 
 Write-Host "`nCreating symbolic links..."
-Add-SymbolicLinksRecursive -SourceDir "$PSScriptRoot/home" -TargetDir $HOME
+Add-SymbolicLinksRecursive -SourceDir "$PSScriptRoot/files/home" -TargetDir $HOME
+Add-SymbolicLink -SourceFile "$PSScriptRoot/files/powershell-profile.ps1" -TargetFile $PROFILE.CurrentUserAllHosts
 
 Write-Host "`nInstalling winget packages..."
 Install-WingetPackageCollections -PackageCollections $config.winget
