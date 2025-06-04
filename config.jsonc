@@ -17,7 +17,8 @@
                 "Microsoft.DotNet.SDK.8",
                 "Microsoft.AzureCLI",
                 "Telerik.Fiddler.Classic",
-                "OpenJS.NodeJS.LTS"
+                "OpenJS.NodeJS.LTS",
+                "jqlang.jq"
             ]
         },
         {
