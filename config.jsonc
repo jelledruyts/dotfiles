@@ -18,7 +18,8 @@
                 "Microsoft.AzureCLI",
                 "Telerik.Fiddler.Classic",
                 "OpenJS.NodeJS.LTS",
-                "jqlang.jq"
+                "jqlang.jq",
+                "Google.CloudSDK"
             ]
         },
         {
