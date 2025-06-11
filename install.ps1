@@ -230,6 +230,23 @@ function Install-WSL {
     }
 }
 
+function Enable-RemoteDesktop {
+    if (Read-Prompt -Message "Allow Remote Desktop connections to this device?") {
+        Write-Host "Allowing Remote Desktop connections..."
+
+        # Enable Remote Desktop
+        Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0
+        Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Value 1
+
+        # Allow Remote Desktop through Windows Firewall
+        Enable-NetFirewallRule -Group "@FirewallAPI.dll,-28752" # This is the language-independent group identifier of DisplayGroup "Remote Desktop"
+
+        # Log in locally with the account password at least once to ensure Remote Desktop will work
+        $msa = Read-Host "Enter your Microsoft Account email address (or leave empty to skip)"
+        runas /u:MicrosoftAccount\$msa "cmd"
+    }
+}
+
 Assert-Elevated
 
 Write-Host "Reading configuration..."
@@ -251,5 +268,7 @@ Add-PowerShellModules -PowerShellModules $config.powershell
 Install-NerdFonts -NerdFonts $config.nerdfonts
 
 Install-WSL -WSLDistributions $config.wsl
+
+Enable-RemoteDesktop
 
 Write-Host "`nInstallation complete!`n"
