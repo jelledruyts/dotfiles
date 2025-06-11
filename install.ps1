@@ -68,7 +68,7 @@ function Install-WingetPackage {
         [string[]]$Package
     )
 
-    winget install --exact --accept-package-agreements --id $package
+    winget install --accept-source-agreements --accept-package-agreements --exact --id $package
 }
 
 function Install-WingetPackages {

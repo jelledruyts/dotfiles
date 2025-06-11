@@ -1,6 +1,6 @@
 REM Install prerequisites
-winget install -e --id Git.Git
-winget install -e --id Microsoft.PowerShell
+winget install --accept-source-agreements --accept-package-agreements --exact --id Git.Git
+winget install --accept-source-agreements --accept-package-agreements --exact --id Microsoft.PowerShell
 
 REM Clone the dotfiles repository
 mkdir "%USERPROFILE%\Local\Code"
