@@ -197,6 +197,39 @@ function Set-WindowsTerminalFont {
     Write-Host "Set Windows Terminal default profile font to ""$FontFace""."
 }
 
+function Install-NerdFonts {
+    param (
+        [Parameter(Mandatory)]
+        [object[]]$NerdFonts
+    )
+
+    if ($NerdFonts.count -gt 0) {
+        Write-Host "`nInstalling Nerd Fonts..."
+        Add-NerdFonts -NerdFonts $NerdFonts
+        # Set the first Nerd Font as the default font for Windows Terminal
+        Set-WindowsTerminalFont -FontFace $NerdFonts[0].font
+    }
+
+}
+
+function Install-WSL {
+    param (
+        [Parameter(Mandatory)]
+        [object[]]$WSLDistributions
+    )
+
+    if ($WSLDistributions.count -gt 0) {
+        if (Read-Prompt -Message "Install WSL?") {
+            Write-Host "`nInstalling WSL distributions..."
+            Install-WingetPackage -Package "Microsoft.WSL"
+            foreach ($wslDistribution in $WSLDistributions) {
+                Write-Host "Installing WSL distribution ""$wslDistribution""..."
+                wsl --install $wslDistribution
+            }
+        }
+    }
+}
+
 Assert-Elevated
 
 Write-Host "Reading configuration..."
@@ -215,17 +248,8 @@ Add-StartupApps -StartupApps $config.startup
 Write-Host "`nInstalling PowerShell modules..."
 Add-PowerShellModules -PowerShellModules $config.powershell
 
-if ($config.nerdfonts.count -gt 0) {
-    Write-Host "`nInstalling Nerd Fonts..."
-    Add-NerdFonts -NerdFonts $config.nerdfonts
-    Set-WindowsTerminalFont -FontFace $config.nerdfonts[0].font
-}
+Install-NerdFonts -NerdFonts $config.nerdfonts
 
-if ($config.wsl.count -gt 0) {
-    Write-Host "`nInstalling WSL distributions..."
-    Install-WingetPackage -Package "Microsoft.WSL"
-    foreach ($wsl in $config.wsl) {
-        Write-Host "Installing WSL distribution ""$wsl""..."
-        wsl --install $wsl
-    }
-}
+Install-WSL -WSLDistributions $config.wsl
+
+Write-Host "`nInstallation complete!`n"
