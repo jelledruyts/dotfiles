@@ -3,33 +3,85 @@
         {
             "name": "Core",
             "packages": [
-                "7zip.7zip",
-                "Microsoft.Office",
-                "VideoLAN.VLC",
-                "Spotify.Spotify",
-                "9NKSQGP7F2NH" // WhatsApp on the Microsoft Store
+                {
+                    "id": "7zip.7zip",
+                    "name": "7-Zip"
+                },
+                {
+                    "id": "Microsoft.Office",
+                    "name": "Microsoft Office"
+                },
+                {
+                    "id": "VideoLAN.VLC",
+                    "name": "VLC Media Player"
+                },
+                {
+                    "id": "Spotify.Spotify",
+                    "name": "Spotify"
+                },
+                {
+                    "id": "9NKSQGP7F2NH",
+                    "name": "WhatsApp"
+                }
             ]
         },
         {
             "name": "Development",
             "packages": [
-                "Microsoft.VisualStudioCode", // TODO: Add --override '/SILENT /mergetasks="!runcode,addcontextmenufolders"'
-                "Microsoft.DotNet.SDK.8",
-                "Microsoft.AzureCLI",
-                "Telerik.Fiddler.Classic",
-                "OpenJS.NodeJS.LTS",
-                "jqlang.jq",
-                "Google.CloudSDK"
+                {
+                    "id": "Microsoft.VisualStudioCode",
+                    "name": "Visual Studio Code",
+                    "override": "/SILENT /mergetasks=\"!runcode,addcontextmenufolders\""
+                },
+                {
+                    "id": "Microsoft.DotNet.SDK.8",
+                    "name": ".NET 8"
+                },
+                {
+                    "id": "Microsoft.AzureCLI",
+                    "name": "Azure CLI"
+                },
+                {
+                    "id": "Telerik.Fiddler.Classic",
+                    "name": "Fiddler Classic"
+                },
+                {
+                    "id": "OpenJS.NodeJS.LTS",
+                    "name": "Node.js LTS"
+                },
+                {
+                    "id": "jqlang.jq",
+                    "name": "jq"
+                },
+                {
+                    "id": "Google.CloudSDK",
+                    "name": "Google Cloud CLI"
+                }
             ]
         },
         {
             "name": "Optional",
             "packages": [
-                "EpicGames.EpicGamesLauncher",
-                "dotPDNLLC.paintdotnet",
-                "Microsoft.PowerBI",
-                "9MSPC6MP8FM4", // Microsoft Whiteboard on the Microsoft Store
-                "9P4CLT2RJ1RS" // MusicBee on the Microsoft Store
+                {
+                    "id": "EpicGames.EpicGamesLauncher",
+                    "name": "Epic Games"
+                },
+                {
+                    "id": "dotPDNLLC.paintdotnet",
+                    "name": "Paint.NET"
+                },
+                {
+                    "id": "Microsoft.PowerBI",
+                    "name": "Power BI Desktop"
+                },
+                {
+                    "id": "9MSPC6MP8FM4",
+                    "name": "Microsoft Whiteboard"
+                },
+                {
+                    "id": "9P4CLT2RJ1RS",
+                    "name": "MusicBee"
+                }
             ]
         }
     ],

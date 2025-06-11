@@ -65,22 +65,29 @@ function Add-SymbolicLinksRecursive {
 function Install-WingetPackage {
     param (
         [Parameter(Mandatory)]
-        [string[]]$Package
+        [string[]]$Package,
+        [Parameter(Mandatory = $false)]
+        [string]$Override
     )
 
-    winget install --accept-source-agreements --accept-package-agreements --exact --id $package
+    winget install --accept-source-agreements --accept-package-agreements --exact --id $package --override $Override
 }
 
 function Install-WingetPackages {
     param (
         [Parameter(Mandatory)]
-        [string[]]$Packages
+        [object[]]$Packages
     )
 
     foreach ($package in $Packages) {
-        if (Read-Prompt -Message "Install ""$package"" package?") {
-            Write-Host "Installing ""$package""..."
-            Install-WingetPackage -Package $package
+        $packageName = $package.name
+        if (-not $packageName) {
+            $packageName = $package.id
+        }
+
+        if (Read-Prompt -Message "Install ""$packageName""?") {
+            Write-Host "Installing ""$packageName""..."
+            Install-WingetPackage -Package $package.id -Override $package.override
         }
     }
 }
