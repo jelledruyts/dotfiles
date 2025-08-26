@@ -92,7 +92,8 @@
         }
     ],
     "powershell": [
-        "Terminal-Icons"
+        "Terminal-Icons",
+        "powershell-yaml"
     ],
     "nerdfonts": [ // The first one in the list will be used by default in Windows Terminal
         {
