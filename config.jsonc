@@ -42,6 +42,10 @@
                     "name": ".NET 8"
                 },
                 {
+                    "id": "Microsoft.DotNet.SDK.10",
+                    "name": ".NET 10"
+                },
+                {
                     "id": "Microsoft.AzureCLI",
                     "name": "Azure CLI"
                 },
@@ -71,7 +75,7 @@
                     "name": "Epic Games"
                 },
                 {
-                    "id": "dotPDNLLC.paintdotnet",
+                    "id": "dotPDN.PaintDotNet",
                     "name": "Paint.NET"
                 },
                 {
