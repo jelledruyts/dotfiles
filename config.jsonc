@@ -89,6 +89,10 @@
                 {
                     "id": "9P4CLT2RJ1RS",
                     "name": "MusicBee"
+                },
+                {
+                    "id": "calibre.calibre",
+                    "name": "Calibre"
                 }
             ]
         }
