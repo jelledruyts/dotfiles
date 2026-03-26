@@ -6,3 +6,6 @@
 	autocrlf = true
 [init]
 	defaultBranch = main
+[merge "mergiraf"] # https://haacked.com/archive/2026/03/25/resolve-merge-conflicts/
+    name = mergiraf
+    driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L

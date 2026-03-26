@@ -58,6 +58,10 @@
                     "name": "Node.js LTS"
                 },
                 {
+                    "id": "Mergiraf.Mergiraf",
+                    "name": "Mergiraf"
+                },
+                {
                     "id": "jqlang.jq",
                     "name": "jq"
                 },
