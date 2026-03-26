@@ -62,6 +62,10 @@ function Add-SymbolicLinksRecursive {
     }
 }
 
+function Update-WingetPackages {
+    winget upgrade --accept-source-agreements --accept-package-agreements --all
+}
+
 function Install-WingetPackage {
     param (
         [Parameter(Mandatory)]
@@ -102,6 +106,9 @@ function Install-WingetPackageCollections {
         if (Read-Prompt -Message "Install ""$($packageCollection.name)"" packages?") {
             Install-WingetPackages -Packages $packageCollection.packages
         }
+    }
+    if (Read-Prompt -Message "Update all WinGet packages?") {
+        Update-WingetPackages
     }
 }
 
