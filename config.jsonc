@@ -58,6 +58,10 @@
                     "name": "Node.js LTS"
                 },
                 {
+                    "id": "GitHub.Copilot",
+                    "name": "GitHub Copilot CLI"
+                },
+                {
                     "id": "Mergiraf.Mergiraf",
                     "name": "Mergiraf"
                 },
