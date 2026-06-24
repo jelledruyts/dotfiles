@@ -101,6 +101,10 @@
                 {
                     "id": "calibre.calibre",
                     "name": "Calibre"
+                },
+                {
+                    "id": "Jabra.Direct",
+                    "name": "Jabra Direct"
                 }
             ]
         }
