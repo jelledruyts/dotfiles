@@ -105,6 +105,10 @@
                 {
                     "id": "Jabra.Direct",
                     "name": "Jabra Direct"
+                },
+                {
+                    "id": "Anthropic.Claude",
+                    "name": "Claude Desktop"
                 }
             ]
         }
