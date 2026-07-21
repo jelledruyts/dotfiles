@@ -29,7 +29,7 @@ function Add-SymbolicLink {
     )
 
     if (Test-Path $TargetFile) {
-        Write-Warning "Skipped linking ""$SourceFile"" as target ""$TargetFile"" already exists."
+        Write-Information "Skipped linking ""$SourceFile"" as target ""$TargetFile"" already exists."
     }
     else {
         # Ensure target directory exists
@@ -63,7 +63,7 @@ function Add-SymbolicLinksRecursive {
 }
 
 function Update-WingetPackages {
-    winget upgrade --accept-source-agreements --accept-package-agreements --all
+    & winget upgrade --accept-source-agreements --accept-package-agreements --all
 }
 
 function Install-WingetPackage {
@@ -74,7 +74,7 @@ function Install-WingetPackage {
         [string]$Override
     )
 
-    winget install --accept-source-agreements --accept-package-agreements --exact --id $package --override $Override
+    & winget install --accept-source-agreements --accept-package-agreements --exact --id $package --override $Override
 }
 
 function Install-WingetPackages {
@@ -177,7 +177,7 @@ function Add-NerdFonts {
     Import-Module -Name NerdFonts
 
     foreach ($nerdFont in $NerdFonts) {
-        Write-Host "Adding ""$nerdFont""..."
+        Write-Host "Adding ""$($nerdFont.name)""..."
         Install-NerdFont -Name $nerdFont.name
     }
 }
@@ -261,28 +261,35 @@ function Enable-RemoteDesktop {
     }
 }
 
-Assert-Elevated
+function Main {
+    Assert-Elevated
 
-Write-Host "Reading configuration..."
-$config = Get-Content "$PSScriptRoot/config.jsonc" | ConvertFrom-Json -AsHashtable
+    Write-Host "Pulling latest changes..."
+    & git -C $PSScriptRoot pull
 
-Write-Host "`nCreating symbolic links..."
-Add-SymbolicLinksRecursive -SourceDir "$PSScriptRoot/files/home" -TargetDir $HOME
-Add-SymbolicLink -SourceFile "$PSScriptRoot/files/powershell-profile.ps1" -TargetFile $PROFILE.CurrentUserAllHosts
+    Write-Host "`nReading configuration..."
+    $config = Get-Content "$PSScriptRoot/config.jsonc" | ConvertFrom-Json -AsHashtable
 
-Write-Host "`nInstalling winget packages..."
-Install-WingetPackageCollections -PackageCollections $config.winget
+    Write-Host "`nCreating symbolic links..."
+    Add-SymbolicLinksRecursive -SourceDir "$PSScriptRoot/files/home" -TargetDir $HOME
+    Add-SymbolicLink -SourceFile "$PSScriptRoot/files/powershell-profile.ps1" -TargetFile $PROFILE.CurrentUserAllHosts
 
-Write-Host "`nAdding startup apps..."
-Add-StartupApps -StartupApps $config.startup
+    Write-Host "`nInstalling winget packages..."
+    Install-WingetPackageCollections -PackageCollections $config.winget
 
-Write-Host "`nInstalling PowerShell modules..."
-Add-PowerShellModules -PowerShellModules $config.powershell
+    Write-Host "`nAdding startup apps..."
+    Add-StartupApps -StartupApps $config.startup
 
-Install-NerdFonts -NerdFonts $config.nerdfonts
+    Write-Host "`nInstalling PowerShell modules..."
+    Add-PowerShellModules -PowerShellModules $config.powershell
 
-Install-WSL -WSLDistributions $config.wsl
+    Install-NerdFonts -NerdFonts $config.nerdfonts
 
-Enable-RemoteDesktop
+    Install-WSL -WSLDistributions $config.wsl
 
-Write-Host "`nInstallation complete!`n"
+    Enable-RemoteDesktop
+
+    Write-Host "`nInstallation complete!`n"
+}
+
+Main
