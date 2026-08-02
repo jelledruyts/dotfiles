@@ -62,10 +62,6 @@ function Add-SymbolicLinksRecursive {
     }
 }
 
-function Update-WingetPackages {
-    & winget upgrade --accept-source-agreements --accept-package-agreements --all
-}
-
 function Install-WingetPackage {
     param (
         [Parameter(Mandatory)]
@@ -89,6 +85,11 @@ function Install-WingetPackages {
             $packageName = $package.id
         }
 
+        if ($package.state -eq "disabled") {
+            Write-Debug "Skipping ""$packageName"" as it is disabled for installation."
+            continue
+        }
+
         if (Read-Prompt -Message "Install ""$packageName""?") {
             Write-Host "Installing ""$packageName""..."
             Install-WingetPackage -Package $package.id -Override $package.override
@@ -107,8 +108,37 @@ function Install-WingetPackageCollections {
             Install-WingetPackages -Packages $packageCollection.packages
         }
     }
-    if (Read-Prompt -Message "Update all WinGet packages?") {
-        Update-WingetPackages
+}
+
+function Update-WingetPackage {
+    param (
+        [Parameter(Mandatory)]
+        [string[]]$Package
+    )
+    & winget upgrade --accept-source-agreements --accept-package-agreements --exact --id $Package
+}
+
+function Update-WingetPackageCollections {
+    param (
+        [Parameter(Mandatory)]
+        [object[]]$PackageCollections
+    )
+
+    foreach ($packageCollection in $PackageCollections) {
+        foreach ($package in $packageCollection.packages) {
+            $packageName = $package.name
+            if (-not $packageName) {
+                $packageName = $package.id
+            }
+
+            if ($package.update -eq "disabled") {
+                Write-Debug "Skipping ""$packageName"" as it is disabled for update."
+                continue
+            }
+
+            Write-Host "Updating ""$packageName""..."
+            Update-WingetPackage -Package $package.id
+        }
     }
 }
 
@@ -262,34 +292,47 @@ function Enable-RemoteDesktop {
 }
 
 function Main {
-    Assert-Elevated
+    param (
+        [Parameter(Mandatory = $false)]
+        [string[]]$Args
+    )
 
     Write-Host "Pulling latest changes..."
     & git -C $PSScriptRoot pull
 
     Write-Host "`nReading configuration..."
     $config = Get-Content "$PSScriptRoot/config.jsonc" | ConvertFrom-Json -AsHashtable
+    
+    if ($Args -contains "-Update") {
+        Write-Host "`nUpdating PowerShell modules..."
+        Update-WingetPackageCollections -PackageCollections $config.winget
 
-    Write-Host "`nCreating symbolic links..."
-    Add-SymbolicLinksRecursive -SourceDir "$PSScriptRoot/files/home" -TargetDir $HOME
-    Add-SymbolicLink -SourceFile "$PSScriptRoot/files/powershell-profile.ps1" -TargetFile $PROFILE.CurrentUserAllHosts
+        Write-Host "`nUpdate complete!`n"
+    }
+    else {
+        Assert-Elevated
 
-    Write-Host "`nInstalling winget packages..."
-    Install-WingetPackageCollections -PackageCollections $config.winget
+        Write-Host "`nCreating symbolic links..."
+        Add-SymbolicLinksRecursive -SourceDir "$PSScriptRoot/files/home" -TargetDir $HOME
+        Add-SymbolicLink -SourceFile "$PSScriptRoot/files/powershell-profile.ps1" -TargetFile $PROFILE.CurrentUserAllHosts
 
-    Write-Host "`nAdding startup apps..."
-    Add-StartupApps -StartupApps $config.startup
+        Write-Host "`nInstalling winget packages..."
+        Install-WingetPackageCollections -PackageCollections $config.winget
 
-    Write-Host "`nInstalling PowerShell modules..."
-    Add-PowerShellModules -PowerShellModules $config.powershell
+        Write-Host "`nAdding startup apps..."
+        Add-StartupApps -StartupApps $config.startup
 
-    Install-NerdFonts -NerdFonts $config.nerdfonts
+        Write-Host "`nInstalling PowerShell modules..."
+        Add-PowerShellModules -PowerShellModules $config.powershell
 
-    Install-WSL -WSLDistributions $config.wsl
+        Install-NerdFonts -NerdFonts $config.nerdfonts
 
-    Enable-RemoteDesktop
+        Install-WSL -WSLDistributions $config.wsl
 
-    Write-Host "`nInstallation complete!`n"
+        Enable-RemoteDesktop
+
+        Write-Host "`nInstallation complete!`n"
+    }
 }
 
-Main
+Main -args $args

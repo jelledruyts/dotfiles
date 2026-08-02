@@ -17,7 +17,8 @@
                 },
                 {
                     "id": "Spotify.Spotify",
-                    "name": "Spotify"
+                    "name": "Spotify",
+                    "update": "disabled"
                 },
                 {
                     "id": "9NKSQGP7F2NH",
@@ -35,11 +36,13 @@
                 {
                     "id": "Microsoft.VisualStudioCode",
                     "name": "Visual Studio Code",
-                    "override": "/SILENT /mergetasks=\"!runcode,addcontextmenufolders\""
+                    "override": "/SILENT /mergetasks=\"!runcode,addcontextmenufolders\"",
+                    "update": "disabled"
                 },
                 {
                     "id": "Microsoft.DotNet.SDK.8",
-                    "name": ".NET 8"
+                    "name": ".NET 8",
+                    "state": "disabled"
                 },
                 {
                     "id": "Microsoft.DotNet.SDK.10",
@@ -59,7 +62,8 @@
                 },
                 {
                     "id": "GitHub.Copilot",
-                    "name": "GitHub Copilot CLI"
+                    "name": "GitHub Copilot CLI",
+                    "update": "disabled"
                 },
                 {
                     "id": "Mergiraf.Mergiraf",
@@ -71,7 +75,8 @@
                 },
                 {
                     "id": "Google.CloudSDK",
-                    "name": "Google Cloud CLI"
+                    "name": "Google Cloud CLI",
+                    "state": "disabled"
                 }
             ]
         },
@@ -80,7 +85,8 @@
             "packages": [
                 {
                     "id": "EpicGames.EpicGamesLauncher",
-                    "name": "Epic Games"
+                    "name": "Epic Games",
+                    "update": "disabled"
                 },
                 {
                     "id": "dotPDN.PaintDotNet",
@@ -108,7 +114,8 @@
                 },
                 {
                     "id": "Anthropic.Claude",
-                    "name": "Claude Desktop"
+                    "name": "Claude Desktop",
+                    "update": "disabled"
                 }
             ]
         }
