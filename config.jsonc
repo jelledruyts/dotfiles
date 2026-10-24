@@ -4,6 +4,10 @@
             "name": "Core",
             "packages": [
                 {
+                    "id": "Microsoft.PowerShell",
+                    "name": "PowerShell"
+                },
+                {
                     "id": "7zip.7zip",
                     "name": "7-Zip"
                 },
@@ -33,6 +37,10 @@
         {
             "name": "Development",
             "packages": [
+                {
+                    "id": "Git.Git",
+                    "name": "Git"
+                },
                 {
                     "id": "Microsoft.VisualStudioCode",
                     "name": "Visual Studio Code",
